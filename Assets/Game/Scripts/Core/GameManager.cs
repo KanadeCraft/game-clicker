@@ -81,6 +81,14 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 採掘師購入判定
+    /// </summary>
+    public bool CanBuyMiner()
+    {
+        return resource >= minerCost;
+    }
+
+    /// <summary>
     /// 採掘師購入
     /// </summary>
     public bool BuyMiner()
