@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour
                 DisplayName = "採掘師",
                 Count = 0,
                 Cost = 10,
-                Production = 1
+                Production = 1,
+                CostIncrease = 5
             });
 
         facilities.Add(
@@ -33,7 +34,8 @@ public class GameManager : MonoBehaviour
                 DisplayName = "魔石採掘機",
                 Count = 0,
                 Cost = 100,
-                Production = 5
+                Production = 5,
+                CostIncrease = 20
             });
     }
 
@@ -66,10 +68,10 @@ public class GameManager : MonoBehaviour
 
     //数値の外部表示用
     public int Resource => resource;
-    public int MinerCount => minerCount;
-    public int MinerCost => minerCost;
-    public int MachineCount => machineCount;
-    public int MachineCost => machineCost;
+    public int MinerCount => GetFacility("Miner").Count;
+    public int MinerCost => GetFacility("Miner").Cost;
+    public int MachineCount => GetFacility("Machine").Count;
+    public int MachineCost => GetFacility("Machine").Cost;
 
     //各種イベント関数グループ
     public event Action<int> OnResourceChanged;
@@ -77,6 +79,8 @@ public class GameManager : MonoBehaviour
     public event Action<int> OnMinerCostChanged;
     public event Action<int> OnMachineCountChanged;
     public event Action<int> OnMachineCostChanged;
+
+    public event Action<FacilityData> OnFacilityChanged;
 
 
     /// <summary>
@@ -156,97 +160,38 @@ public class GameManager : MonoBehaviour
 
         facility.Count++;
 
-        facility.Cost += 5;
+        facility.Cost += facility.CostIncrease;
 
         OnResourceChanged?.Invoke(resource);
+        OnFacilityChanged?.Invoke(facility);
 
         return true;
     }
 
-    [ContextMenu("Buy Miner")]
-    private void TestBuyMiner()
-    {
-        BuyFacility("Miner");
-    }
-
-    [ContextMenu("Buy Machine")]
-    private void TestBuyMachine()
-    {
-        BuyFacility("Machine");
-    }
-
     /// <summary>
-    /// 採掘師を増やす
-    /// </summary>
-    public void AddMiner(int amount)
-    {
-        minerCount += amount;
-
-        OnMinerCountChanged?.Invoke(minerCount);
-    }
-
-    /// <summary>
-    /// 採掘師購入判定
+    /// 購入判定
     /// </summary>
     public bool CanBuyMiner()
     {
-        return resource >= minerCost;
-    }
-
-    /// <summary>
-    /// 採掘師購入
-    /// </summary>
-    public bool BuyMiner()
-    {
-        if (resource < minerCost)
-        {
-            return false;
-        }
-
-        resource -= minerCost;
-
-        AddMiner(1);
-
-        minerCost += 5;
-
-        OnResourceChanged?.Invoke(resource);
-        OnMinerCostChanged?.Invoke(minerCost);
-
-        return true;
-    }
-
-    /// <summary>
-    /// 採掘師を増やす
-    /// </summary>
-    public void AddMachine(int amount)
-    {
-        machineCount += amount;
-
-        OnMachineCountChanged?.Invoke(machineCount);
+        return resource >= GetFacility("Miner").Cost;
     }
 
     public bool CanBuyMachine()
     {
-        return resource >= machineCost;
+        return resource >= GetFacility("Machine").Cost;
+    }
+
+    /// <summary>
+    /// 購入
+    /// </summary>
+    public bool BuyMiner()
+    {
+        return BuyFacility("Miner");
     }
 
     public bool BuyMachine()
     {
-        if (resource < machineCost)
-        {
-            return false;
-        }
-
-        resource -= machineCost;
-
-        AddMachine(1);
-
-        machineCost += 20;
-
-        OnResourceChanged?.Invoke(resource);
-        OnMachineCostChanged?.Invoke(machineCost);
-
-        return true;
+        return BuyFacility("Machine");
     }
 
     /// <summary>

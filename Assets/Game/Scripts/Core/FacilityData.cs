@@ -4,7 +4,7 @@ using System;
 public class FacilityData
 {
     /// <summary>
-    /// Id、名前、所持数、購入コスト、一個当たりの増加数
+    /// Id、名前、所持数、購入コスト、一個当たりの増加数、コストの増加量
     /// </summary>
     public string Id;
 
@@ -15,4 +15,6 @@ public class FacilityData
     public int Cost;
 
     public int Production;
+
+    public int CostIncrease;
 }
