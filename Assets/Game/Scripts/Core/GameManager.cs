@@ -1,9 +1,41 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    private void InitializeFacilities()
+    {
+        if (facilities.Count > 0)
+        {
+            return;
+        }
+
+        facilities.Add(
+            new FacilityData
+            {
+                Id = "Miner",
+                DisplayName = "採掘師",
+                Count = 0,
+                Cost = 10,
+                Production = 1
+            });
+
+        facilities.Add(
+            new FacilityData
+            {
+                Id = "Machine",
+                DisplayName = "魔石採掘機",
+                Count = 0,
+                Cost = 100,
+                Production = 5
+            });
+    }
+
+    [SerializeField]
+    private List<FacilityData> facilities  = new List<FacilityData>();
 
     [Header("Resource")]
     [SerializeField]
@@ -52,6 +84,7 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+        InitializeFacilities();
     }
 
     private void Update()
