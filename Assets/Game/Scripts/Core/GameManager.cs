@@ -109,4 +109,18 @@ public class GameManager : MonoBehaviour
 
         return true;
     }
+
+    /// <summary>
+    /// セーブデータ読み込み
+    /// </summary>
+    public void LoadData(int resource, int minerCount, int minerCost)
+    {
+        this.resource = resource;
+        this.minerCount = minerCount;
+        this.minerCost = minerCost;
+
+        OnResourceChanged?.Invoke(this.resource);
+        OnMinerCountChanged?.Invoke(this.minerCount);
+        OnMinerCostChanged?.Invoke(this.minerCost);
+    }
 }
