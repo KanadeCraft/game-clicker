@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [SerializeField]
+    private List<FacilityData> facilities = new List<FacilityData>();
+
     private void InitializeFacilities()
     {
         if (facilities.Count > 0)
@@ -34,8 +37,12 @@ public class GameManager : MonoBehaviour
             });
     }
 
-    [SerializeField]
-    private List<FacilityData> facilities  = new List<FacilityData>();
+    public FacilityData GetFacility(string id)
+    {
+        return facilities.Find(f => f.Id == id);
+    }
+
+    
 
     [Header("Resource")]
     [SerializeField]
@@ -109,9 +116,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int GetProductionPerSecond()
     {
-        return
-            minerCount * 1 +
-            machineCount * 5;
+        int totalProduction = 0;
+
+        foreach (FacilityData facility in facilities)
+        {
+            totalProduction +=
+                facility.Count *
+                facility.Production;
+        }
+
+        return totalProduction;
     }
 
     /// <summary>
@@ -122,6 +136,43 @@ public class GameManager : MonoBehaviour
         resource += amount;
 
         OnResourceChanged?.Invoke(resource);
+    }
+
+    public bool BuyFacility(string id)
+    {
+        FacilityData facility = GetFacility(id);
+
+        if (facility == null)
+        {
+            return false;
+        }
+
+        if (resource < facility.Cost)
+        {
+            return false;
+        }
+
+        resource -= facility.Cost;
+
+        facility.Count++;
+
+        facility.Cost += 5;
+
+        OnResourceChanged?.Invoke(resource);
+
+        return true;
+    }
+
+    [ContextMenu("Buy Miner")]
+    private void TestBuyMiner()
+    {
+        BuyFacility("Miner");
+    }
+
+    [ContextMenu("Buy Machine")]
+    private void TestBuyMachine()
+    {
+        BuyFacility("Machine");
     }
 
     /// <summary>
