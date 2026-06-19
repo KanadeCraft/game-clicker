@@ -7,6 +7,8 @@ public class SaveManager : MonoBehaviour
     private const string MinerCountKey = "MinerCount";
     private const string MinerCostKey = "MinerCost";
     private const string LastQuitTimeKey = "LastQuitTime";
+    private const string MachineCountKey = "MachineCount";
+    private const string MachineCostKey = "MachineCost";
 
     [ContextMenu("Delete Save")]
     public void DeleteSave()
@@ -44,6 +46,14 @@ public class SaveManager : MonoBehaviour
         LastQuitTimeKey,
         DateTime.UtcNow.ToBinary().ToString());
 
+        PlayerPrefs.SetInt(
+            MachineCountKey,
+            GameManager.Instance.MachineCount);
+
+        PlayerPrefs.SetInt(
+            MachineCostKey,
+            GameManager.Instance.MachineCost);
+
         PlayerPrefs.Save();
 
         Debug.Log("Save Complete");
@@ -60,10 +70,18 @@ public class SaveManager : MonoBehaviour
         int minerCost =
             PlayerPrefs.GetInt(MinerCostKey, 10);
 
+        int machineCount =
+            PlayerPrefs.GetInt(MachineCountKey,0);
+
+        int machineCost =
+            PlayerPrefs.GetInt(MachineCostKey,100);
+
         GameManager.Instance.LoadData(
             resource,
             minerCount,
-            minerCost);
+            minerCost,
+            machineCount,
+            machineCost);
 
         ApplyOfflineProgress();
 
@@ -78,7 +96,7 @@ public class SaveManager : MonoBehaviour
         }
 
         long binaryTime =
-    long.Parse(
+        long.Parse(
         PlayerPrefs.GetString(LastQuitTimeKey));
 
         DateTime lastQuitTime =
@@ -88,15 +106,16 @@ public class SaveManager : MonoBehaviour
             DateTime.UtcNow - lastQuitTime;
 
         double seconds =
-            offlineTime.TotalSeconds;
+            Math.Floor(offlineTime.TotalSeconds);
 
         int gainedResource =
             Mathf.FloorToInt(
-                (float)(seconds * GameManager.Instance.MinerCount));
+                (float)(seconds * GameManager.Instance.GetProductionPerSecond()));
 
         GameManager.Instance.AddResource(gainedResource);
 
-        Debug.Log(
-            $"Offline Gain : {gainedResource}");
+        Debug.Log($"Seconds : {seconds}");
+        Debug.Log($"Production : {GameManager.Instance.GetProductionPerSecond()}");
+        Debug.Log($"Offline Gain : {gainedResource}");
     }
 }

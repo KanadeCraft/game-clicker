@@ -13,9 +13,15 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private int minerCount = 0;
 
-    //採掘師の初期価格
+    [Header("Machines")]
+    [SerializeField]
+    private int machineCount = 0;
+
+    //各強化の初期価格
     [SerializeField]
     private int minerCost = 10;
+    [SerializeField]
+    private int machineCost = 100;
 
     private float autoMineTimer = 0f;
 
@@ -23,11 +29,16 @@ public class GameManager : MonoBehaviour
     public int Resource => resource;
     public int MinerCount => minerCount;
     public int MinerCost => minerCost;
+    public int MachineCount => machineCount;
+    public int MachineCost => machineCost;
 
     //各種イベント関数グループ
     public event Action<int> OnResourceChanged;
     public event Action<int> OnMinerCountChanged;
     public event Action<int> OnMinerCostChanged;
+    public event Action<int> OnMachineCountChanged;
+    public event Action<int> OnMachineCostChanged;
+
 
     /// <summary>
     /// 起動時
@@ -45,7 +56,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (minerCount <= 0)
+        if (GetProductionPerSecond() <= 0)
         {
             return;
         }
@@ -54,10 +65,20 @@ public class GameManager : MonoBehaviour
 
         if (autoMineTimer >= 1f)
         {
-            AddResource(minerCount);
+            AddResource(GetProductionPerSecond());
 
             autoMineTimer -= 1f;
         }
+    }
+
+    /// <summary>
+    /// 現在の毎秒生産量
+    /// </summary>
+    public int GetProductionPerSecond()
+    {
+        return
+            minerCount * 1 +
+            machineCount * 5;
     }
 
     /// <summary>
@@ -111,16 +132,54 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 採掘師を増やす
+    /// </summary>
+    public void AddMachine(int amount)
+    {
+        machineCount += amount;
+
+        OnMachineCountChanged?.Invoke(machineCount);
+    }
+
+    public bool CanBuyMachine()
+    {
+        return resource >= machineCost;
+    }
+
+    public bool BuyMachine()
+    {
+        if (resource < machineCost)
+        {
+            return false;
+        }
+
+        resource -= machineCost;
+
+        AddMachine(1);
+
+        machineCost += 20;
+
+        OnResourceChanged?.Invoke(resource);
+        OnMachineCostChanged?.Invoke(machineCost);
+
+        return true;
+    }
+
+    /// <summary>
     /// セーブデータ読み込み
     /// </summary>
-    public void LoadData(int resource, int minerCount, int minerCost)
+    public void LoadData(int resource,int minerCount,int minerCost,int machineCount,int machineCost)
     {
         this.resource = resource;
         this.minerCount = minerCount;
         this.minerCost = minerCost;
+        this.machineCount = machineCount;
+        this.machineCost = machineCost;
 
         OnResourceChanged?.Invoke(this.resource);
         OnMinerCountChanged?.Invoke(this.minerCount);
         OnMinerCostChanged?.Invoke(this.minerCost);
+        OnMachineCountChanged?.Invoke(this.machineCount);
+        OnMachineCostChanged?.Invoke(this.machineCost);
     }
 }
