@@ -10,6 +10,6 @@ public class BuyMinerButton : MonoBehaviour
     /// </summary>
     public void OnClickBuyMiner()
     {
-        GameManager.Instance.AddMiner(minerAmount);
+        GameManager.Instance.BuyMiner();
     }
 }
