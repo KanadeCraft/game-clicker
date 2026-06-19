@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private int minerCount = 0;
 
+    private float autoMineTimer = 0f;
+
     //数値の外部表示用
     public int Resource => resource;
     public int MinerCount => minerCount;
@@ -34,6 +36,23 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+    }
+
+    private void Update()
+    {
+        if (minerCount <= 0)
+        {
+            return;
+        }
+
+        autoMineTimer += Time.deltaTime;
+
+        if (autoMineTimer >= 1f)
+        {
+            AddResource(minerCount);
+
+            autoMineTimer -= 1f;
+        }
     }
 
     /// <summary>
