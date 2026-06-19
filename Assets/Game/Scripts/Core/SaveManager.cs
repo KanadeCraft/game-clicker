@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class SaveManager : MonoBehaviour
@@ -5,6 +6,7 @@ public class SaveManager : MonoBehaviour
     private const string ResourceKey = "Resource";
     private const string MinerCountKey = "MinerCount";
     private const string MinerCostKey = "MinerCost";
+    private const string LastQuitTimeKey = "LastQuitTime";
 
     [ContextMenu("Delete Save")]
     public void DeleteSave()
@@ -38,6 +40,10 @@ public class SaveManager : MonoBehaviour
             MinerCostKey,
             GameManager.Instance.MinerCost);
 
+        PlayerPrefs.SetString(
+        LastQuitTimeKey,
+        DateTime.UtcNow.ToBinary().ToString());
+
         PlayerPrefs.Save();
 
         Debug.Log("Save Complete");
@@ -59,6 +65,38 @@ public class SaveManager : MonoBehaviour
             minerCount,
             minerCost);
 
+        ApplyOfflineProgress();
+
         Debug.Log("Load Complete");
+    }
+
+    private void ApplyOfflineProgress()
+    {
+        if (!PlayerPrefs.HasKey(LastQuitTimeKey))
+        {
+            return;
+        }
+
+        long binaryTime =
+    long.Parse(
+        PlayerPrefs.GetString(LastQuitTimeKey));
+
+        DateTime lastQuitTime =
+            DateTime.FromBinary(binaryTime);
+
+        TimeSpan offlineTime =
+            DateTime.UtcNow - lastQuitTime;
+
+        double seconds =
+            offlineTime.TotalSeconds;
+
+        int gainedResource =
+            Mathf.FloorToInt(
+                (float)(seconds * GameManager.Instance.MinerCount));
+
+        GameManager.Instance.AddResource(gainedResource);
+
+        Debug.Log(
+            $"Offline Gain : {gainedResource}");
     }
 }
