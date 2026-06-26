@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a3bf73f7c1dfe48a25646e7065498c, type: 3}
   m_Name: FacilityDatabase
   m_EditorClassIdentifier: Assembly-CSharp::FacilityDatabase
-  Facilities: []
+  Facilities:
+  - {fileID: 11400000, guid: 08a597a5fac8a5d4c91a6d280c305e3c, type: 2}
+  - {fileID: 11400000, guid: 518f9ac77a5782b4da1ae20b7ada9407, type: 2}
