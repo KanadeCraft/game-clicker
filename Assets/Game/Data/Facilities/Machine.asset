@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e919c8517300fc44fbeb049496ee48a7, type: 3}
+  m_Name: Machine
+  m_EditorClassIdentifier: Assembly-CSharp::FacilityDefinition
+  Id: Machine
+  DisplayName: "\u9B54\u77F3\u63A1\u6398\u6A5F"
+  Description: "\u9B54\u529B\u3067\u52D5\u304F\u63A1\u6398\u6A5F"
+  Icon: {fileID: 0}
+  BaseCost: 100
+  CostIncrease: 20
+  Production: 5
